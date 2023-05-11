@@ -1,0 +1,46 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Get Location</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+  </head>
+  <body>
+    
+
+    <script>
+        // Get the user's location
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            
+            // Display the user's location on the page
+            document.getElementById("user-location").innerHTML = "Latitude: " + latitude + ", Longitude: " + longitude;
+            
+            // Send an AJAX request to the Django view function
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/map_view/", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    console.log("Success");
+                }
+            };
+            var data = JSON.stringify({
+                "latitude": latitude,
+                "longitude": longitude
+            });
+            xhr.send(data);
+        });
+    </script>
+
+    {% block content %}
+        <h1>Map View</h1>
+        {{ map_html|safe }}
+    {% endblock %}
+    
+  </body>
+</html>
